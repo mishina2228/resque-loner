@@ -390,7 +390,7 @@ context 'Resque::Worker' do
       @worker.very_verbose = true
       @worker.log('some log text')
 
-      assert_match /\*\* \[15:44:33 2011-03-02\] \d+: some log text/, last_puts
+      assert_match(/\*\* \[15:44:33 2011-03-02\] \d+: some log text/, last_puts)
     ensure
       Time.fake_time = nil
     end
@@ -447,7 +447,7 @@ context 'Resque::Worker' do
           @queue = :long_running_job
 
           def self.perform(run_time, rescue_time = nil)
-            Resque.redis.client.reconnect # get its own connection
+            Resque.redis.reconnect # get its own connection
             Resque.redis.rpush('sigterm-test:start', Process.pid)
             sleep run_time
             Resque.redis.rpush('sigterm-test:result', 'Finished Normally')
@@ -466,7 +466,7 @@ context 'Resque::Worker' do
           # ensure we actually fork
           $TESTING = false
           # reconnect since we just forked
-          Resque.redis.client.reconnect
+          Resque.redis.reconnect
 
           worker = Resque::Worker.new(:long_running_job)
 
@@ -511,7 +511,7 @@ context 'Resque::Worker' do
               @queue = :long_running_job
 
               def self.perform(run_time, rescue_time = nil)
-                Resque.redis.client.reconnect # get its own connection
+                Resque.redis.reconnect # get its own connection
                 Resque.redis.rpush('sigterm-test:start', Process.pid)
                 sleep run_time
                 Resque.redis.rpush('sigterm-test:result', 'Finished Normally')
@@ -529,7 +529,7 @@ context 'Resque::Worker' do
               # ensure we actually fork
               $TESTING = false
               # reconnect since we just forked
-              Resque.redis.client.reconnect
+              Resque.redis.reconnect
 
               worker = Resque::Worker.new(:long_running_job)
               worker.term_timeout = 1
